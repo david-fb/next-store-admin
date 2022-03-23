@@ -2,6 +2,7 @@ import endPoints from '@services/api';
 import useFetch from '@hooks/useFetch';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
 import { useState, useEffect } from 'react';
+import { Chart } from '@common/Chart';
 
 const PRODUCT_LIMIT = 5;
 
@@ -17,6 +18,7 @@ export default function Dashboard() {
     }
   }
 
+  //--Pagination--
   function handleNextPage() {
     if (currentPage < pages.length - 1) setCurrentPage(currentPage + 1);
   }
@@ -135,9 +137,28 @@ export default function Dashboard() {
       );
     }
   }
+  //--Pagination end--
+
+  //Chart
+  const categoryNames = products?.rows?.map((product) => product.category);
+  const categoryCount = categoryNames?.map((category) => category.name);
+
+  const countOccurences = (array) => array.reduce((prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {});
+
+  const data = {
+    datasets: [
+      {
+        label: 'Categories',
+        data: countOccurences(categoryCount),
+        borderWidth: 2,
+        backgroundColor: ['#ffbb11', '#c0c0c0', '#50AF95', '#f3ba2f', '#2a71d0'],
+      },
+    ],
+  };
 
   return (
     <>
+      <Chart className="mb-8 mt-2" chartData={data} />
       <div className="flex flex-col">
         <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
