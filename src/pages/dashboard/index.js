@@ -143,7 +143,7 @@ export default function Dashboard() {
   const categoryNames = products?.rows?.map((product) => product.category);
   const categoryCount = categoryNames?.map((category) => category.name);
 
-  const countOccurences = (array) => array.reduce((prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {});
+  const countOccurences = (array) => array?.reduce((prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {});
 
   const data = {
     datasets: [
