@@ -1,40 +1,66 @@
 //import { useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
-import { createProductSchema } from '@schemas/productSchema';
-import { addProduct } from '@services/api/products';
+import { productSchema } from '@schemas/productSchema';
+import { addProduct, updateProduct } from '@services/api/products';
+import { useEffect } from 'react';
+import { useRouter } from 'next/router';
 
-export default function FormProduct({ setAlert, setOpen }) {
+export default function FormProduct({ setAlert, setOpen, product }) {
   //const formRef = useRef(null);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm({
-    resolver: joiResolver(createProductSchema),
+    resolver: joiResolver(productSchema),
   });
 
-  const onSubmit = (data) => {
-    addProduct(data)
-      .then(() => {
-        setAlert({
-          active: true,
-          message: 'Product added succesfully',
-          type: 'success',
-          autoClose: false,
-        });
-        setOpen(false);
-      })
-      .catch((err) => {
-        setAlert({
-          active: true,
-          message: err.message,
-          type: 'error',
-          autoClose: false,
-        });
-        setOpen(false);
+  useEffect(() => {
+    if (product) {
+      reset({
+        name: product.name,
+        price: product.price,
+        description: product.description,
+        image: product.image,
+        categoryId: product.categoryId,
       });
+    }
+  }, [product]);
+
+  const onSubmit = (data) => {
+    if (product) {
+      updateProduct(data, product.id)
+        .then(() => {
+          router.push('/dashboard/products/');
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    } else {
+      addProduct(data)
+        .then(() => {
+          setAlert({
+            active: true,
+            message: 'Product added succesfully',
+            type: 'success',
+            autoClose: false,
+          });
+          setOpen(false);
+        })
+        .catch((err) => {
+          setAlert({
+            active: true,
+            message: err.message,
+            type: 'error',
+            autoClose: false,
+          });
+          setOpen(false);
+        });
+    }
   };
 
   // const handleSubmit = (event) => {
@@ -61,6 +87,7 @@ export default function FormProduct({ setAlert, setOpen }) {
               </label>
               <input
                 {...register('name')}
+                defaultValue={product?.name}
                 type="text"
                 name="name"
                 id="name"
@@ -74,6 +101,7 @@ export default function FormProduct({ setAlert, setOpen }) {
               </label>
               <input
                 {...register('price')}
+                defaultValue={product?.price}
                 type="number"
                 name="price"
                 id="price"
@@ -87,6 +115,7 @@ export default function FormProduct({ setAlert, setOpen }) {
               </label>
               <select
                 {...register('categoryId')}
+                defaultValue={product?.categoryId}
                 id="categoryId"
                 name="categoryId"
                 autoComplete="category-name"
@@ -105,6 +134,7 @@ export default function FormProduct({ setAlert, setOpen }) {
               </label>
               <textarea
                 {...register('description')}
+                defaultValue={product?.description}
                 name="description"
                 id="description"
                 autoComplete="description"
@@ -119,6 +149,7 @@ export default function FormProduct({ setAlert, setOpen }) {
               </label>
               <input
                 {...register('image')}
+                defaultValue={product?.image}
                 type="text"
                 name="image"
                 id="image"
