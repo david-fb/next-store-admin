@@ -140,7 +140,8 @@ export default function Dashboard() {
   //--Pagination end--
 
   //Chart
-  const categoryNames = products?.rows?.map((product) => product.category);
+  const allProducts = useFetch(endPoints.products.allProducts);
+  const categoryNames = allProducts?.rows?.map((product) => product.category);
   const categoryCount = categoryNames?.map((category) => category.name);
 
   const countOccurences = (array) => array?.reduce((prev, curr) => ((prev[curr] = ++prev[curr] || 1), prev), {});
@@ -178,12 +179,6 @@ export default function Dashboard() {
                     <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Id
                     </th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Edit</span>
-                    </th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Delete</span>
-                    </th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
@@ -206,16 +201,6 @@ export default function Dashboard() {
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">${product?.price}</span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{product?.id}</td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="edit" className="text-indigo-600 hover:text-indigo-900">
-                          Edit
-                        </a>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <a href="edit" className="text-indigo-600 hover:text-indigo-900">
-                          Delete
-                        </a>
-                      </td>
                     </tr>
                   ))}
                 </tbody>
