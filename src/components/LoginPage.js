@@ -2,6 +2,7 @@ import { useRef, useState } from 'react';
 import { useRouter } from 'next/router';
 import { LockClosedIcon } from '@heroicons/react/solid';
 import { useAuth } from '@hooks/useAuth';
+import { signIn, getCsrfToken } from 'next-auth/react';
 
 export default function LoginPage() {
   const emailRef = useRef(null);
@@ -10,23 +11,35 @@ export default function LoginPage() {
   const [errorLogin, setErrorLogin] = useState(null);
   const router = useRouter();
 
-  const submitHandler = (e) => {
+  const submitHandler = async (e) => {
     e.preventDefault();
     const email = emailRef.current.value;
     const password = passwordRef.current.value;
     setErrorLogin(null);
-    auth
-      .signIn(email, password)
-      .then(() => {
-        router.push('/dashboard');
-      })
-      .catch((err) => {
-        if (err.response.status === 401) {
-          setErrorLogin('Email or password incorrect');
-        } else {
-          console.log(err);
-        }
-      });
+    const res = await signIn('credentials', {
+      redirect: false,
+      email: email,
+      password: password,
+      callbackUrl: `${router.basePath}`,
+    });
+    if (res?.error) {
+      setErrorLogin('Email or password incorrect');
+    } else {
+      setErrorLogin(null);
+    }
+    if (res.url) router.push(res.url);
+    // auth
+    //   .signIn(email, password)
+    //   .then(() => {
+    //     router.push('/dashboard');
+    //   })
+    //   .catch((err) => {
+    //     if (err.response.status === 401) {
+    //       setErrorLogin('Email or password incorrect');
+    //     } else {
+    //       console.log(err);
+    //     }
+    //   });
   };
 
   return (
@@ -82,7 +95,7 @@ export default function LoginPage() {
               </div>
 
               <div className="text-sm">
-                <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+                <a href={'/login'} className="font-medium text-indigo-600 hover:text-indigo-500">
                   Forgot your password?
                 </a>
               </div>
