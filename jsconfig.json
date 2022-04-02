@@ -8,7 +8,9 @@
       "@layout/*": ["layout/*"],
       "@hooks/*": ["hooks/*"],
       "@services/*": ["services/*"],
-      "@schemas/*": ["schemas/*"]
+      "@schemas/*": ["schemas/*"],
+      "@libs/*": ["libs/*"],
+      "@assets/*": ["assets/*"],
     }
   }
 }

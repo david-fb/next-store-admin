@@ -3,6 +3,7 @@ import useFetch from '@hooks/useFetch';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
 import { useState, useEffect } from 'react';
 import { Chart } from '@common/Chart';
+import needSession from '@libs/needSession';
 
 const PRODUCT_LIMIT = 5;
 
@@ -259,3 +260,7 @@ export default function Dashboard() {
     </>
   );
 }
+
+export const getServerSideProps = (context) => {
+  return needSession(context);
+};

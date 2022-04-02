@@ -3,37 +3,39 @@ import { useForm } from 'react-hook-form';
 import { joiResolver } from '@hookform/resolvers/joi';
 import { productSchema } from '@schemas/productSchema';
 import { addProduct, updateProduct } from '@services/api/products';
-import { useEffect } from 'react';
+//import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 export default function FormProduct({ setAlert, setOpen, product }) {
   //const formRef = useRef(null);
   const router = useRouter();
-
+  const { data: session } = useSession();
+  const token = session?.token;
   const {
     register,
     handleSubmit,
     formState: { errors },
-    reset,
+    //reset,
   } = useForm({
     resolver: joiResolver(productSchema),
   });
 
-  useEffect(() => {
-    if (product) {
-      reset({
-        name: product.name,
-        price: product.price,
-        description: product.description,
-        image: product.image,
-        categoryId: product.categoryId,
-      });
-    }
-  }, [product]);
+  // useEffect(() => {
+  //   if (product) {
+  //     reset({
+  //       name: product.name,
+  //       price: product.price,
+  //       description: product.description,
+  //       image: product.image,
+  //       categoryId: product.categoryId,
+  //     });
+  //   }
+  // }, [product]);
 
   const onSubmit = (data) => {
     if (product) {
-      updateProduct(data, product.id)
+      updateProduct(data, product.id, token)
         .then(() => {
           router.push('/dashboard/products/');
         })
@@ -41,7 +43,7 @@ export default function FormProduct({ setAlert, setOpen, product }) {
           console.error(err);
         });
     } else {
-      addProduct(data)
+      addProduct(data, token)
         .then(() => {
           setAlert({
             active: true,

@@ -2,7 +2,7 @@
 import { Fragment } from 'react';
 //import { useAuth } from '@hooks/useAuth';
 import { Disclosure, Menu, Transition } from '@headlessui/react';
-import { BellIcon, MenuIcon, XIcon } from '@heroicons/react/outline';
+import { MenuIcon, XIcon } from '@heroicons/react/outline';
 import { useRouter } from 'next/router';
 import { useSession, signOut } from 'next-auth/react';
 import { useEffect, useState } from 'react';
@@ -36,7 +36,7 @@ export default function Header() {
 
   return (
     <>
-      <Disclosure as="nav" className="bg-gray-800">
+      <Disclosure as="nav" className="bg-cyan-600">
         {({ open }) => (
           <>
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -44,38 +44,44 @@ export default function Header() {
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
                     <a href={'/'}>
-                      <img className="h-8 w-8" src="https://tailwindui.com/img/logos/workflow-mark-indigo-500.svg" alt="Workflow" />
+                      <img
+                        className="h-8 w-8 invert"
+                        src="https://firebasestorage.googleapis.com/v0/b/test-bc4fd.appspot.com/o/controller.png?alt=media&token=bb29f5b1-58b0-446e-9e6a-3d9249a1d34b"
+                        alt="Control"
+                      />
                     </a>
                   </div>
                   <div className="hidden md:block">
-                    <div className="ml-10 flex items-baseline space-x-4">
-                      {navigation.map((item) => (
-                        <a
-                          key={item.name}
-                          href={item.href}
-                          className={classNames(
-                            item.href === router.pathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                            'px-3 py-2 rounded-md text-sm font-medium'
-                          )}
-                          aria-current={item.href === router.pathname ? 'page' : undefined}
-                        >
-                          {item.name}
-                        </a>
-                      ))}
-                    </div>
+                    {session?.user && (
+                      <div className="ml-10 flex items-baseline space-x-4">
+                        {navigation.map((item) => (
+                          <a
+                            key={item.name}
+                            href={item.href}
+                            className={classNames(
+                              item.href === router.pathname ? 'bg-cyan-900 text-white' : 'text-cyan-50 hover:bg-cyan-700 hover:text-white',
+                              'px-3 py-2 rounded-md text-sm font-medium'
+                            )}
+                            aria-current={item.href === router.pathname ? 'page' : undefined}
+                          >
+                            {item.name}
+                          </a>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="hidden md:block z-10">
                   <div className="ml-4 flex items-center md:ml-6">
                     {session?.user ? (
                       <>
-                        <button
+                        {/* <button
                           type="button"
                           className="bg-gray-800 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                         >
                           <span className="sr-only">View notifications</span>
                           <BellIcon className="h-6 w-6" aria-hidden="true" />
-                        </button>
+                        </button> */}
 
                         {/* Profile dropdown */}
                         <Menu as="div" className="ml-3 relative">
@@ -106,7 +112,7 @@ export default function Header() {
                               ))}
                               <Menu.Item key={`item.logout`}>
                                 {({ active }) => (
-                                  <button onClick={signOut} className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}>
+                                  <button onClick={signOut} className={classNames(active ? 'bg-gray-100 w-full text-left' : '', 'block px-4 py-2 text-sm text-gray-700 w-full text-left')}>
                                     Sing out
                                   </button>
                                 )}
@@ -118,7 +124,7 @@ export default function Header() {
                     ) : (
                       <a
                         href={'/login'}
-                        className={classNames('/login' === router.pathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}
+                        className={classNames('/login' === router.pathname ? 'bg-cyan-900 text-white' : 'text-cyan-50 hover:bg-cyan-700 hover:text-white', 'px-3 py-2 rounded-md text-sm font-medium')}
                         aria-current={'/login' === router.pathname ? 'page' : undefined}
                       >
                         Log in
@@ -128,7 +134,7 @@ export default function Header() {
                 </div>
                 <div className="-mr-2 flex md:hidden">
                   {/* Mobile menu button */}
-                  <Disclosure.Button className="bg-gray-800 inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white">
+                  <Disclosure.Button className="bg-cyan-800 inline-flex items-center justify-center p-2 rounded-md text-cyan-400 hover:text-white hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-cyan-800 focus:ring-white">
                     <span className="sr-only">Open main menu</span>
                     {open ? <XIcon className="block h-6 w-6" aria-hidden="true" /> : <MenuIcon className="block h-6 w-6" aria-hidden="true" />}
                   </Disclosure.Button>
@@ -137,23 +143,25 @@ export default function Header() {
             </div>
 
             <Disclosure.Panel className="md:hidden">
-              <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                {navigation.map((item) => (
-                  <Disclosure.Button
-                    key={item.name}
-                    as="a"
-                    href={item.href}
-                    className={classNames(
-                      item.href === router.pathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                      'block px-3 py-2 rounded-md text-base font-medium'
-                    )}
-                    aria-current={item.href === router.pathname ? 'page' : undefined}
-                  >
-                    {item.name}
-                  </Disclosure.Button>
-                ))}
-              </div>
-              <div className="pt-4 pb-3 border-t border-gray-700">
+              {session && (
+                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                  {navigation.map((item) => (
+                    <Disclosure.Button
+                      key={item.name}
+                      as="a"
+                      href={item.href}
+                      className={classNames(
+                        item.href === router.pathname ? 'bg-cyan-900 text-white' : 'text-cyan-50 hover:bg-cyan-700 hover:text-white',
+                        'block px-3 py-2 rounded-md text-base font-medium'
+                      )}
+                      aria-current={item.href === router.pathname ? 'page' : undefined}
+                    >
+                      {item.name}
+                    </Disclosure.Button>
+                  ))}
+                </div>
+              )}
+              <div className="pt-4 pb-3 border-t border-cyan-700">
                 {session?.user ? (
                   <>
                     <div className="flex items-center px-5">
@@ -162,38 +170,40 @@ export default function Header() {
                       </div>
                       <div className="ml-3">
                         <div className="text-base font-medium leading-none text-white">{userData.name}</div>
-                        <div className="text-sm font-medium leading-none text-gray-400">{userData.email}</div>
+                        <div className="text-sm font-medium leading-none text-cyan-50">{userData.email}</div>
                       </div>
-                      <button
+                      {/* <button
                         type="button"
                         className="ml-auto bg-gray-800 flex-shrink-0 p-1 rounded-full text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
                       >
                         <span className="sr-only">View notifications</span>
                         <BellIcon className="h-6 w-6" aria-hidden="true" />
-                      </button>
+                      </button> */}
                     </div>
                     <div className="mt-3 px-2 space-y-1">
                       {userNavigation.map((item) => (
-                        <Disclosure.Button key={item.name} as="a" href={item.href} className="block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700">
+                        <Disclosure.Button key={item.name} as="a" href={item.href} className="block px-3 py-2 rounded-md text-base font-medium text-cyan-50 hover:text-white hover:bg-cyan-700">
                           {item.name}
                         </Disclosure.Button>
                       ))}
-                      <button onClick={signOut} className={'block px-3 py-2 rounded-md text-base font-medium text-gray-400 hover:text-white hover:bg-gray-700'}>
+                      <button onClick={signOut} className={'block px-3 py-2 rounded-md text-base font-medium text-cyan-50 hover:text-white hover:bg-cyan-700 w-full text-left'}>
                         Sing out
                       </button>
                     </div>
                   </>
                 ) : (
-                  <a
-                    href={'/login'}
-                    className={classNames(
-                      '/login' === router.pathname ? 'bg-gray-900 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white',
-                      'block px-3 py-2 rounded-md text-base font-medium'
-                    )}
-                    aria-current={'/login' === router.pathname ? 'page' : undefined}
-                  >
-                    Log in
-                  </a>
+                  <div className="px-2">
+                    <a
+                      href={'/login'}
+                      className={classNames(
+                        '/login' === router.pathname ? 'bg-cyan-900 text-white' : 'text-cyan-300 hover:bg-cyan-700 hover:text-white',
+                        'block px-3 py-2 rounded-md text-base font-medium'
+                      )}
+                      aria-current={'/login' === router.pathname ? 'page' : undefined}
+                    >
+                      Log in
+                    </a>
+                  </div>
                 )}
               </div>
             </Disclosure.Panel>

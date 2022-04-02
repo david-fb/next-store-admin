@@ -16,6 +16,18 @@ export const useAuth = () => {
 
 function useProvideAuth() {
   const [user, setUser] = useState(null);
+  // if (jsCookie.get('token') && !user) {
+  //   axios.defaults.headers.Authorization = `Bearer ${jsCookie.get('token')}`;
+  //   axios
+  //     .get(endPoints.profile.getProfile)
+  //     .then((response) => {
+  //       setUser(response.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       jsCookie.remove('token');
+  //     });
+  // }
 
   const signIn = async (email, password) => {
     const options = {
@@ -29,15 +41,20 @@ function useProvideAuth() {
     const token = data.token;
     if (data.token) {
       jsCookie.set('token', token, { expires: 5 });
-
       axios.defaults.headers.Authorization = `Bearer ${token}`;
-      const { data: user } = await axios.get(endPoints.profile.getProfile);
-      setUser(user);
+      //const { data: user } = await axios.get(endPoints.profile.getProfile);
+      setUser(data.user);
     }
+  };
+
+  const logOut = () => {
+    jsCookie.remove('token');
+    setUser(null);
   };
 
   return {
     user,
     signIn,
+    logOut,
   };
 }

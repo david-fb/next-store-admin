@@ -8,26 +8,27 @@ import Alert from '@common/Alert';
 import useAlert from '@hooks/useAlert';
 import { deleteProduct } from '@services/api/products';
 import Link from 'next/link';
+import needSession from '@libs/needSession';
 
-export default function Products() {
+export default function Products({ token }) {
   const [products, setProducts] = useState([]);
   const [open, setOpen] = useState(false);
   const { alert, setAlert, toggleAlert } = useAlert();
 
   useEffect(() => {
     async function getProducts() {
-      const response = await axios.get(endPoints.products.allProducts);
-      setProducts(response.data);
+      try {
+        const response = await axios.get(endPoints.products.allProducts);
+        setProducts(response.data);
+      } catch (error) {
+        console.log(error.message);
+      }
     }
-    try {
-      getProducts();
-    } catch (error) {
-      console.log(error);
-    }
+    getProducts();
   }, [alert]);
 
   const handleDelete = (id) => {
-    deleteProduct(id)
+    deleteProduct(id, token)
       .then(() => {
         setAlert({
           active: true,
@@ -48,7 +49,7 @@ export default function Products() {
 
   return (
     <>
-      <Alert alert={alert} handleClose={toggleAlert} />
+      {alert?.active && <Alert alert={alert} handleClose={toggleAlert} />}
       <div className="lg:flex lg:items-center lg:justify-between">
         <div className="flex-1 min-w-0">
           <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:text-3xl sm:truncate">List of Products</h2>
@@ -138,3 +139,45 @@ export default function Products() {
     </>
   );
 }
+
+export const getServerSideProps = async (context) => {
+  return needSession(context);
+};
+
+// export const getServerSideProps = async (context) => {
+//   const session = await getSession(context);
+//   const token = session?.token;
+//   console.log(token);
+//   if (token) {
+//     try {
+//       const response = await axios.get(endPoints.profile.getProfile, {
+//         headers: {
+//           authorization: `Bearer ${token}`,
+//         },
+//       });
+//       if (response.status === 200 && response.data.role === 'admin') {
+//         return {
+//           props: {
+//             user: response.data,
+//           },
+//         };
+//       }
+//       if (response.data.role) {
+//         return {
+//           redirect: {
+//             destination: '/',
+//             permanent: false,
+//           },
+//         };
+//       }
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   }
+//   return {
+//     redirect: {
+//       destination: '/login',
+//       permanent: false,
+//     },
+//   };
+// };
